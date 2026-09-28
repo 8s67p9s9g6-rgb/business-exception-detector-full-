@@ -1,618 +1,819 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Business Exception Detector</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Business Exception Detector V42</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0b0f14;
-      color: #f5f7fa;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1000px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .logo {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .card {
-      background: #131922;
-      border: 1px solid #27303d;
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      margin-top: 0;
-    }
-
-    p {
-      color: #9ca6b5;
-    }
-
-    input,
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #303a48;
-      margin-top: 10px;
-      font-size: 16px;
-    }
-
-    input {
-      background: #0d1219;
-      color: white;
-    }
-
-    button {
-      background: #238636;
-      color: white;
-      border: none;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .secondary {
-      background: #242c38;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .status {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #19212c;
-      color: #b9c3d0;
-    }
-
-    .exception {
-      border: 1px solid #3a4350;
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 12px;
-      background: #10161f;
-    }
-
-    .high {
-      border-left: 5px solid #f85149;
-    }
-
-    .medium {
-      border-left: 5px solid #d29922;
-    }
-
-    .low {
-      border-left: 5px solid #58a6ff;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      background: #303846;
-      margin-bottom: 8px;
-    }
-
-    .logout {
-      width: auto;
-      padding: 9px 15px;
-      margin: 0;
-    }
-
-    .file {
-      padding: 20px;
-      border: 2px dashed #303a48;
-      border-radius: 12px;
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#0b0f14;
+  color:#f5f7fa;
+}
+.container{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:24px;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:30px;
+}
+.logo h1{
+  margin:0;
+  font-size:28px;
+}
+.logo p{
+  margin:6px 0 0;
+  color:#9ba5b1;
+}
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+}
+.primary{
+  background:#2563eb;
+  color:white;
+}
+.secondary{
+  background:#202833;
+  color:white;
+}
+.danger{
+  background:#7f1d1d;
+  color:white;
+}
+.card{
+  background:#121821;
+  border:1px solid #27313d;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.stat{
+  background:#161e28;
+  border:1px solid #293442;
+  border-radius:14px;
+  padding:18px;
+}
+.stat strong{
+  display:block;
+  font-size:28px;
+  margin-top:5px;
+}
+.muted{
+  color:#9ba5b1;
+}
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+input,select,textarea{
+  width:100%;
+  background:#0d131b;
+  color:white;
+  border:1px solid #303b48;
+  border-radius:9px;
+  padding:12px;
+  font-size:15px;
+}
+.toolbar input{
+  flex:1;
+  min-width:220px;
+}
+.exception{
+  border:1px solid #303b48;
+  background:#101720;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:12px;
+}
+.exception.high{
+  border-left:5px solid #ef4444;
+}
+.exception.medium{
+  border-left:5px solid #f59e0b;
+}
+.exception.resolved{
+  opacity:.55;
+}
+.exception-head{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+}
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+.high-badge{
+  background:#451a1a;
+  color:#fca5a5;
+}
+.medium-badge{
+  background:#422006;
+  color:#fcd34d;
+}
+.payment-badge{
+  background:#172554;
+  color:#93c5fd;
+}
+.duplicate-badge{
+  background:#312e81;
+  color:#c4b5fd;
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:14px;
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+.reason{
+  margin-top:12px;
+  background:#0b1118;
+  padding:13px;
+  border-radius:9px;
+  color:#cbd5e1;
+}
+.empty{
+  text-align:center;
+  padding:50px 20px;
+  color:#8b97a5;
+}
+.hidden{
+  display:none!important;
+}
+.login{
+  max-width:430px;
+  margin:70px auto;
+}
+.login h1{
+  margin-bottom:5px;
+}
+.form-group{
+  margin-bottom:14px;
+}
+.form-group label{
+  display:block;
+  margin-bottom:6px;
+  color:#aeb8c4;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  text-align:left;
+  padding:12px;
+  border-bottom:1px solid #293442;
+}
+@media(max-width:700px){
+  .container{padding:15px}
+  .stats{grid-template-columns:1fr 1fr}
+  .row{grid-template-columns:1fr}
+  .header{align-items:flex-start}
+  .header h1{font-size:23px}
+}
+</style>
 </head>
 
 <body>
 
+<div id="loginScreen" class="container login">
+  <div class="card">
+    <h1>Business Exception Detector</h1>
+    <p class="muted">Find invoice and payment exceptions automatically.</p>
+
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Password">
+      </div>
+
+      <button class="primary" style="width:100%" onclick="login()">
+        Log in
+      </button>
+
+      <button class="secondary" style="width:100%;margin-top:10px"
+        onclick="signup()">
+        Create account
+      </button>
+
+      <p id="loginMessage" class="muted"></p>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+
 <div class="container">
 
   <div class="header">
-    <div class="logo">Business Exception Detector</div>
-    <button id="logoutBtn" class="secondary logout hidden">Log out</button>
+    <div class="logo">
+      <h1>Business Exception Detector</h1>
+      <p>V42 · Find invoice and payment exceptions</p>
+    </div>
+
+    <button class="secondary" onclick="logout()">Log out</button>
   </div>
 
-  <!-- LOGIN -->
-  <div id="loginScreen" class="card">
-    <h1>Find business exceptions.</h1>
-    <p>
-      Upload your invoice and payment data and let the detector identify
-      duplicates, payment problems and other exceptions.
+  <div class="stats">
+
+    <div class="stat">
+      <span class="muted">Total exceptions</span>
+      <strong id="totalCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span class="muted">High priority</span>
+      <strong id="highCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span class="muted">Payments</span>
+      <strong id="paymentCount">0</strong>
+    </div>
+
+    <div class="stat">
+      <span class="muted">Duplicates</span>
+      <strong id="duplicateCount">0</strong>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h2>Import invoices</h2>
+    <p class="muted">
+      Upload a CSV file and the detector will scan it for duplicate
+      invoices, payment issues and other exceptions.
     </p>
 
-    <h2>Log in</h2>
+    <input id="csvFile" type="file" accept=".csv">
 
-    <input
-      id="loginEmail"
-      type="email"
-      placeholder="Email"
-    >
-
-    <input
-      id="loginPassword"
-      type="password"
-      placeholder="Password"
-    >
-
-    <button onclick="login()">Log in</button>
-
-    <button
-      class="secondary"
-      onclick="showSignup()"
-    >
-      Create account
+    <button class="primary" style="margin-top:12px"
+      onclick="scanFile()">
+      Scan CSV
     </button>
 
-    <div id="loginStatus" class="status hidden"></div>
+    <p id="scanMessage" class="muted"></p>
   </div>
 
+  <div class="card">
 
-  <!-- SIGNUP -->
-  <div id="signupScreen" class="card hidden">
+    <div class="toolbar">
+      <input
+        id="search"
+        placeholder="Search invoice, customer or reference..."
+        oninput="render()">
 
-    <h1>Create your account</h1>
+      <select id="filter" onchange="render()">
+        <option value="ALL">All exceptions</option>
+        <option value="HIGH">High priority</option>
+        <option value="Payment">Payments</option>
+        <option value="Duplicate">Duplicates</option>
+        <option value="OPEN">Open</option>
+        <option value="RESOLVED">Resolved</option>
+      </select>
 
-    <input
-      id="signupEmail"
-      type="email"
-      placeholder="Email"
-    >
-
-    <input
-      id="signupPassword"
-      type="password"
-      placeholder="Password"
-    >
-
-    <button onclick="signup()">Create account</button>
-
-    <button
-      class="secondary"
-      onclick="showLogin()"
-    >
-      Back to login
-    </button>
-
-    <div id="signupStatus" class="status hidden"></div>
-
-  </div>
-
-
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden">
-
-    <div class="card">
-
-      <h1>Exception Detector</h1>
-
-      <p>
-        Upload a CSV containing your business data.
-      </p>
-
-      <div class="file">
-
-        <input
-          id="csvFile"
-          type="file"
-          accept=".csv"
-        >
-
-        <button onclick="uploadCSV()">
-          Analyse CSV
-        </button>
-
-      </div>
-
-      <div id="uploadStatus" class="status hidden"></div>
-
+      <button class="secondary" onclick="exportExceptions()">
+        Export CSV
+      </button>
     </div>
 
-
-    <div class="card">
-
-      <h2>Detected exceptions</h2>
-
-      <div id="exceptions">
-        <p>No scan results yet.</p>
-      </div>
-
-    </div>
+    <div id="exceptions"></div>
 
   </div>
 
 </div>
-
+</div>
 
 <script>
 
-let loggedIn = false;
-
-
-// -------------------------
-// SCREEN SWITCHING
-// -------------------------
-
-function showSignup() {
-
-  document.getElementById("loginScreen")
-    .classList.add("hidden");
-
-  document.getElementById("signupScreen")
-    .classList.remove("hidden");
-}
-
-
-function showLogin() {
-
-  document.getElementById("signupScreen")
-    .classList.add("hidden");
-
-  document.getElementById("loginScreen")
-    .classList.remove("hidden");
-}
-
-
-// -------------------------
-// SIGN UP
-// -------------------------
-
-async function signup() {
-
-  const email =
-    document.getElementById("signupEmail").value.trim();
-
-  const password =
-    document.getElementById("signupPassword").value;
-
-  const status =
-    document.getElementById("signupStatus");
-
-  status.classList.remove("hidden");
-
-  if (!email || !password) {
-
-    status.textContent =
-      "Please enter an email and password.";
-
-    return;
-  }
-
-  try {
-
-    const response = await fetch("/api/signup", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        email,
-        password
-      })
-
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Signup failed");
-    }
-
-    status.textContent =
-      "Account created. Logging you in...";
-
-    await loginWithCredentials(email, password);
-
-  } catch (error) {
-
-    status.textContent = error.message;
-
-  }
-}
-
-
-// -------------------------
-// LOGIN
-// -------------------------
-
-async function login() {
-
-  const email =
-    document.getElementById("loginEmail").value.trim();
-
-  const password =
-    document.getElementById("loginPassword").value;
-
-  await loginWithCredentials(email, password);
-}
-
-
-async function loginWithCredentials(email, password) {
-
-  const status =
-    document.getElementById("loginStatus");
-
-  status.classList.remove("hidden");
-
-  try {
-
-    const response = await fetch("/api/login", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        email,
-        password
-      })
-
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Login failed");
-    }
-
-    loggedIn = true;
-
-    document.getElementById("loginScreen")
-      .classList.add("hidden");
-
-    document.getElementById("signupScreen")
-      .classList.add("hidden");
-
-    document.getElementById("dashboard")
-      .classList.remove("hidden");
-
-    document.getElementById("logoutBtn")
-      .classList.remove("hidden");
-
-    loadExceptions();
-
-  } catch (error) {
-
-    status.textContent = error.message;
-
-  }
-}
-
-
-// -------------------------
-// LOGOUT
-// -------------------------
-
-document.getElementById("logoutBtn")
-  .addEventListener("click", async () => {
-
-    await fetch("/api/logout", {
-      method: "POST"
-    });
-
-    location.reload();
-
+let exceptions=[];
+
+async function api(url,options={}){
+  const res=await fetch(url,{
+    credentials:"include",
+    ...options
   });
 
+  let data={};
 
-// -------------------------
-// UPLOAD CSV
-// -------------------------
+  try{
+    data=await res.json();
+  }catch(e){}
 
-async function uploadCSV() {
+  if(!res.ok){
+    throw new Error(data.error || "Request failed");
+  }
 
-  const fileInput =
-    document.getElementById("csvFile");
+  return data;
+}
 
-  const status =
-    document.getElementById("uploadStatus");
+async function login(){
 
-  if (!fileInput.files.length) {
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
 
-    status.textContent =
+  if(!email || !password){
+    document.getElementById("loginMessage").textContent=
+      "Enter your email and password.";
+    return;
+  }
+
+  try{
+
+    await api("/api/login",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    showApp();
+
+  }catch(e){
+
+    document.getElementById("loginMessage").textContent=e.message;
+
+  }
+}
+
+async function signup(){
+
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+
+  if(!email || !password){
+    document.getElementById("loginMessage").textContent=
+      "Enter an email and password.";
+    return;
+  }
+
+  if(password.length<8){
+    document.getElementById("loginMessage").textContent=
+      "Password must be at least 8 characters.";
+    return;
+  }
+
+  try{
+
+    await api("/api/signup",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    showApp();
+
+  }catch(e){
+
+    document.getElementById("loginMessage").textContent=e.message;
+
+  }
+}
+
+async function logout(){
+
+  try{
+    await api("/api/logout",{method:"POST"});
+  }catch(e){}
+
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+}
+
+async function showApp(){
+
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  await loadExceptions();
+}
+
+async function loadExceptions(){
+
+  try{
+
+    const data=await api("/api/exceptions");
+
+    exceptions=data.exceptions || [];
+
+    render();
+
+  }catch(e){
+
+    document.getElementById("exceptions").innerHTML=
+      `<div class="empty">${escapeHtml(e.message)}</div>`;
+
+  }
+}
+
+async function scanFile(){
+
+  const file=document.getElementById("csvFile").files[0];
+
+  if(!file){
+    document.getElementById("scanMessage").textContent=
       "Choose a CSV file first.";
-
-    status.classList.remove("hidden");
-
     return;
   }
 
-  const formData = new FormData();
+  const form=new FormData();
+  form.append("file",file);
 
-  formData.append(
-    "file",
-    fileInput.files[0]
-  );
+  document.getElementById("scanMessage").textContent=
+    "Scanning...";
 
-  status.textContent =
-    "Analysing your data...";
+  try{
 
-  status.classList.remove("hidden");
+    await api("/api/scans",{
+      method:"POST",
+      body:form
+    });
 
-  try {
+    document.getElementById("scanMessage").textContent=
+      "Scan complete.";
 
-    const response = await fetch(
-      "/api/scans",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
+    await loadExceptions();
 
-    const data = await response.json();
+  }catch(e){
 
-    if (!response.ok) {
-      throw new Error(
-        data.error || "Upload failed"
-      );
-    }
-
-    status.textContent =
-      "Analysis complete.";
-
-    loadExceptions();
-
-  } catch (error) {
-
-    status.textContent =
-      error.message;
+    document.getElementById("scanMessage").textContent=
+      e.message;
 
   }
 }
 
+function render(){
 
-// -------------------------
-// LOAD EXCEPTIONS
-// -------------------------
+  const search=
+    document.getElementById("search").value.toLowerCase();
 
-async function loadExceptions() {
+  const filter=
+    document.getElementById("filter").value;
 
-  try {
+  let list=exceptions.filter(x=>{
 
-    const response =
-      await fetch("/api/exceptions");
+    const text=JSON.stringify(x).toLowerCase();
 
-    if (!response.ok) return;
+    if(search && !text.includes(search))
+      return false;
 
-    const data =
-      await response.json();
+    if(filter==="HIGH")
+      return x.severity==="HIGH";
 
-    displayExceptions(
-      data.exceptions || []
-    );
+    if(filter==="Payment")
+      return x.type==="Payment";
 
-  } catch (error) {
+    if(filter==="Duplicate")
+      return x.type==="Duplicate";
 
-    console.log(error);
+    if(filter==="OPEN")
+      return x.status!=="RESOLVED";
 
-  }
-}
+    if(filter==="RESOLVED")
+      return x.status==="RESOLVED";
 
+    return true;
+  });
 
-// -------------------------
-// DISPLAY EXCEPTIONS
-// -------------------------
+  updateStats();
 
-function displayExceptions(exceptions) {
+  const box=document.getElementById("exceptions");
 
-  const container =
-    document.getElementById("exceptions");
+  if(!list.length){
 
-  if (!exceptions.length) {
-
-    container.innerHTML =
-      "<p>No exceptions detected.</p>";
+    box.innerHTML=
+      `<div class="empty">
+        No exceptions found.
+       </div>`;
 
     return;
   }
 
-  container.innerHTML = "";
+  box.innerHTML=list.map(exceptionCard).join("");
+}
 
-  exceptions.forEach(exception => {
+function exceptionCard(x){
 
-    const div =
-      document.createElement("div");
+  const severity=(x.severity||"").toUpperCase();
 
-    const severity =
-      String(
-        exception.severity || "LOW"
-      ).toLowerCase();
+  const cls=
+    severity==="HIGH"
+      ?"high"
+      :"medium";
 
-    div.className =
-      "exception " + severity;
+  const resolved=
+    x.status==="RESOLVED"
+      ?"resolved"
+      :"";
 
-    div.innerHTML = `
+  const badge=
+    x.type==="Duplicate"
+      ?`<span class="badge duplicate-badge">DUPLICATE</span>`
+      :x.type==="Payment"
+        ?`<span class="badge payment-badge">PAYMENT</span>`
+        :`<span class="badge ${severity==="HIGH"?"high-badge":"medium-badge"}">
+            ${escapeHtml(severity||"REVIEW")}
+          </span>`;
 
-      <div class="badge">
-        ${escapeHTML(exception.severity || "LOW")}
+  return `
+  <div class="exception ${cls} ${resolved}">
+
+    <div class="exception-head">
+
+      <div>
+        ${badge}
+
+        <h3>
+          ${escapeHtml(
+            x.invoice_no ||
+            x.invoice ||
+            x.reference ||
+            "Exception"
+          )}
+        </h3>
       </div>
 
-      <h3>
-        ${escapeHTML(exception.type || "Exception")}
-      </h3>
+      <div class="muted">
+        ${escapeHtml(x.status || "OPEN")}
+      </div>
 
-      <p>
-        ${escapeHTML(exception.reason || "")}
-      </p>
+    </div>
+
+    <div class="row">
+
+      <div>
+        <span class="muted">Customer</span>
+        <br>
+        ${escapeHtml(
+          x.customer ||
+          x.customer_name ||
+          "—"
+        )}
+      </div>
+
+      <div>
+        <span class="muted">Amount</span>
+        <br>
+        ${formatMoney(
+          x.amount ||
+          x.total ||
+          x.invoice_total
+        )}
+      </div>
+
+    </div>
+
+    <div class="reason">
+
+      <strong>Why was this flagged?</strong>
+
+      <br><br>
+
+      ${escapeHtml(
+        x.reason ||
+        "This transaction requires review."
+      )}
+
+      ${x.reference ? `
+        <br><br>
+        <span class="muted">
+          Reference: ${escapeHtml(x.reference)}
+        </span>
+      `:""}
+
+    </div>
+
+    <div class="actions">
 
       ${
-        exception.reference
-        ? `<p><strong>Reference:</strong>
-           ${escapeHTML(exception.reference)}
-           </p>`
-        : ""
+        x.status!=="RESOLVED"
+        ?
+        `<button class="primary"
+          onclick="resolveException(${Number(x.id)})">
+          Resolve
+        </button>`
+        :
+        ""
       }
 
-    `;
+      <button class="secondary"
+        onclick="addNote(${Number(x.id)})">
+        Add note
+      </button>
 
-    container.appendChild(div);
+    </div>
 
+  </div>
+  `;
+}
+
+async function resolveException(id){
+
+  try{
+
+    await api("/api/exceptions/"+id,{
+      method:"PATCH",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        status:"RESOLVED"
+      })
+    });
+
+    await loadExceptions();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
+
+async function addNote(id){
+
+  const note=prompt("Add a note:");
+
+  if(!note)
+    return;
+
+  try{
+
+    await api("/api/exceptions/"+id+"/note",{
+      method:"PATCH",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        note
+      })
+    });
+
+    await loadExceptions();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
+
+function updateStats(){
+
+  document.getElementById("totalCount").textContent=
+    exceptions.length;
+
+  document.getElementById("highCount").textContent=
+    exceptions.filter(x=>x.severity==="HIGH").length;
+
+  document.getElementById("paymentCount").textContent=
+    exceptions.filter(x=>x.type==="Payment").length;
+
+  document.getElementById("duplicateCount").textContent=
+    exceptions.filter(x=>x.type==="Duplicate").length;
+}
+
+function exportExceptions(){
+
+  if(!exceptions.length){
+    alert("There are no exceptions to export.");
+    return;
+  }
+
+  const headers=[
+    "Type",
+    "Severity",
+    "Status",
+    "Invoice",
+    "Customer",
+    "Amount",
+    "Reason"
+  ];
+
+  const rows=exceptions.map(x=>[
+    x.type||"",
+    x.severity||"",
+    x.status||"",
+    x.invoice_no||x.invoice||"",
+    x.customer||x.customer_name||"",
+    x.amount||x.total||"",
+    x.reason||""
+  ]);
+
+  const csv=[
+    headers,
+    ...rows
+  ].map(row=>
+    row.map(value=>
+      `"${String(value).replace(/"/g,'""')}"`
+    ).join(",")
+  ).join("\n");
+
+  const blob=new Blob([csv],{
+    type:"text/csv"
   });
 
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="business-exceptions.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
 }
 
+function formatMoney(value){
 
-// -------------------------
-// SECURITY
-// -------------------------
+  if(value===undefined ||
+     value===null ||
+     value==="")
+    return "—";
 
-function escapeHTML(value) {
+  const n=Number(
+    String(value).replace(/[^0-9.-]/g,"")
+  );
 
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  if(Number.isNaN(n))
+    return escapeHtml(String(value));
 
+  return new Intl.NumberFormat("en-GB",{
+    style:"currency",
+    currency:"GBP"
+  }).format(n);
 }
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+(async function(){
+
+  try{
+
+    const data=await api("/api/me");
+
+    if(data && data.user){
+      showApp();
+    }
+
+  }catch(e){
+
+    // Not logged in — login screen stays visible.
+
+  }
+
+})();
 
 </script>
 
